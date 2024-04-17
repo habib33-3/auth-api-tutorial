@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import {
   getModelForClass,
   prop,
@@ -7,7 +8,7 @@ import {
   DocumentType,
 } from "@typegoose/typegoose";
 import argon2 from "argon2";
-import { nanoid } from "nanoid";
+
 import log from "../utils/logger";
 
 @pre<User>("save", async function () {
@@ -19,6 +20,7 @@ import log from "../utils/logger";
 
   this.password = hash;
 })
+
 @modelOptions({
   schemaOptions: {
     timestamps: true,
@@ -27,6 +29,7 @@ import log from "../utils/logger";
     allowMixed: Severity.ALLOW,
   },
 })
+
 export class User {
   @prop({
     lowercase: true,
