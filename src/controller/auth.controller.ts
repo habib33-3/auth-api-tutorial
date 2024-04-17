@@ -38,7 +38,7 @@ export async function createSessionHandler(
   const accessToken = signAccessToken(user);
 
   // sign a refresh token
-  const refreshToken = await signRefreshToken({ userId: user._id });
+  const refreshToken = await signRefreshToken({ userId: (user._id.toString()) });
 
   // send the tokens
 
@@ -50,6 +50,10 @@ export async function createSessionHandler(
 
 export async function refreshAccessTokenHandler(req: Request, res: Response) {
   const refreshToken = get(req, "headers.x-refresh");
+
+  if(!refreshToken){
+    return res.status(403)
+  }
 
   const decoded = verifyJwt<{ session: string }>(
     refreshToken,
