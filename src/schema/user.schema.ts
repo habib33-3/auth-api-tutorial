@@ -38,8 +38,25 @@ export const forgotPasswordSchema = object({
   }),
 });
 
+export const resetPasswordSchema = object({
+  params: object({
+    id: string(),
+    passwordResetCode: string(),
+  }),
+  body: object({
+    password: string({
+      required_error: "password is required",
+    }).min(6, "password is too short"),
+    passwordConfirmation: string({
+      required_error: "password is required",
+    }),
+  }),
+});
+
 export type CreateUserInput = TypeOf<typeof createUserSchema>["body"];
 
 export type VerifyUserInput = TypeOf<typeof verifyUserSchema>["params"];
 
 export type ForgotPasswordInput = TypeOf<typeof forgotPasswordSchema>["body"];
+
+export type ResetPasswordInput = TypeOf<typeof resetPasswordSchema>;
