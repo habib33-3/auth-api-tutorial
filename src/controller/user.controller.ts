@@ -134,3 +134,7 @@ export const resetPasswordHandler = async (
 
   return res.send("password reset done");
 };
+
+export const getCurrentUserHandler = async (req: Request, res: Response) => {
+  return res.send(res.locals.user);
+};
