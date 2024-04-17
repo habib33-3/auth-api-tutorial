@@ -1,11 +1,11 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import config from "config";
 
-export const signJwt = (
+export function signJwt(
   object: Object,
   keyName: "accessTokenPrivateKey" | "refreshTokenPrivateKey",
-  options?: SignOptions | undefined
-) => {
+  options?: jwt.SignOptions | undefined
+) {
   const signingKey = Buffer.from(
     config.get<string>(keyName),
     "base64"
@@ -15,18 +15,20 @@ export const signJwt = (
     ...(options && options),
     algorithm: "RS256",
   });
-};
+}
 
-export const verifyJwt = async <T>(
-    token: string,
-    keyName: 'accessTokenPublicKey' | 'refreshTokenPublicKey'
-  ): Promise<T | null> => {
-    const publicKey = Buffer.from(config.get<string>(keyName), 'base64').toString('ascii');
-  
-    try {
-      const decoded = jwt.verify(token, publicKey) as T;
-      return decoded;
-    } catch (error) {
-      return null;
-    }
-  };
+export function verifyJwt<T>(
+  token: string,
+  keyName: "accessTokenPublicKey" | "refreshTokenPublicKey"
+): T | null {
+  const publicKey = Buffer.from(config.get<string>(keyName), "base64").toString(
+    "ascii"
+  );
+
+  try {
+    const decoded = jwt.verify(token, publicKey) as T;
+    return decoded;
+  } catch (e) {
+    return null;
+  }
+}

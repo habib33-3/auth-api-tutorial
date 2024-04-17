@@ -12,6 +12,14 @@ import argon2 from "argon2";
 
 import log from "../utils/logger";
 
+export const privateFields = [
+  "password",
+  "_v",
+  "verificationCode",
+  "passwordResetCode",
+  "verified",
+];
+
 @pre<User>("save", async function () {
   if (!this.isModified("password")) {
     return;
@@ -21,11 +29,9 @@ import log from "../utils/logger";
 
   this.password = hash;
 })
-
 @index({
   email: 1,
 })
-
 @modelOptions({
   schemaOptions: {
     timestamps: true,
