@@ -2,7 +2,7 @@ import { DocumentType } from "@typegoose/typegoose";
 import { Request, Response } from "express";
 import { get } from "lodash";
 import { User } from "../model/user.model";
-import { createSessionType } from "../schema/auth.schema";
+import { CreateSessionInput } from "../schema/auth.schema";
 import {
   findSessionById,
   signAccessToken,
@@ -12,7 +12,7 @@ import { findUserByEmail, findUserById } from "../service/user.service";
 import { verifyJwt } from "../utils/jwt";
 
 export async function createSessionHandler(
-  req: Request<{}, {}, createSessionType>,
+  req: Request<{}, {}, CreateSessionInput>,
   res: Response
 ) {
   const message = "Invalid email or password";
@@ -38,7 +38,7 @@ export async function createSessionHandler(
   const accessToken = signAccessToken(user);
 
   // sign a refresh token
-  const refreshToken = await signRefreshToken({ userId: user._id.toString() });
+  const refreshToken = await signRefreshToken({ userId: user._id });
 
   // send the tokens
 
@@ -49,11 +49,7 @@ export async function createSessionHandler(
 }
 
 export async function refreshAccessTokenHandler(req: Request, res: Response) {
-  const refreshToken = req.headers["x-refresh"];
-
-  if (!refreshToken || typeof refreshToken !== "string") {
-    return res.status(401).send("Refresh token is missing or invalid");
-  }
+  const refreshToken = get(req, "headers.x-refresh");
 
   const decoded = verifyJwt<{ session: string }>(
     refreshToken,
@@ -80,4 +76,3 @@ export async function refreshAccessTokenHandler(req: Request, res: Response) {
 
   return res.send({ accessToken });
 }
-
